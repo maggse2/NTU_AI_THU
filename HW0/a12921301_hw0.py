@@ -41,7 +41,7 @@ class Solution:
         self.numNodes = self.input[0][0] #N
         self.numEdges = self.input[0][1] #M
         self.input.pop(0)
-        print('Number of Nodes:', self.numNodes, '\nNumber of Edges:', self.numEdges)
+        #print('Number of Nodes:', self.numNodes, '\nNumber of Edges:', self.numEdges)
         self.get_graph()
 
 
@@ -65,12 +65,13 @@ class Solution:
             print('Edge does not exist')
             sys.exit(1)
 
-        print('Graph:', self.graph)
+        #print('Graph:', self.graph)
 
         
     def solve(self):
         self.currentNode = self.STARTNODE
         self.longestPath = [self.currentNode]
+        sys.stdout.write(str(self.STARTNODE) + ' ')
         # Find the longest path
         while len(self.graph[self.currentNode]):
             # Remove the current Node from the graph
@@ -81,8 +82,9 @@ class Solution:
             # Find the next Node
             self.currentNode = min(self.graph[self.currentNode])
             self.longestPath.append(self.currentNode)
+            sys.stdout.write(str(self.currentNode) + ' ')
         
-        print('Longest Path:', self.longestPath)
+        #print('Longest Path:', self.longestPath)
             
 
     
