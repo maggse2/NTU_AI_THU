@@ -41,6 +41,9 @@ class Solution:
         self.numNodes = self.input[0][0] #N
         self.numEdges = self.input[0][1] #M
         self.input.pop(0)
+        if self.numEdges!=len(self.input):
+            print('Number of Nodes does not match the input')
+            sys.exit(1)
         #print('Number of Nodes:', self.numNodes, '\nNumber of Edges:', self.numEdges)
         self.get_graph()
 
