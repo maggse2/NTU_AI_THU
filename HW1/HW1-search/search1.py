@@ -19,6 +19,7 @@ Pacman agents (in searchAgents.py).
 
 import util
 
+
 class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
@@ -68,9 +69,11 @@ def tinyMazeSearch(problem):
     sequence of moves will be incorrect, so only use this for tinyMaze.
     """
     from game import Directions
+
     s = Directions.SOUTH
     w = Directions.WEST
-    return  [s, s, w, s, w, w, s, w]
+    return [s, s, w, s, w, w, s, w]
+
 
 def depthFirstSearch(problem: SearchProblem):
     """
@@ -87,28 +90,29 @@ def depthFirstSearch(problem: SearchProblem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    #implement an occur check to get better results
+    # implement an occur check to get better results
     occurred = []
     node_stack = util.Stack()
     current_node = problem.getStartState()
 
     path = []
     edge_stack = util.Stack()
-    
+
     # run the loop until the current node is the goal state
     while not problem.isGoalState(current_node):
         if current_node not in occurred:
             occurred.append(current_node)
             for successor, direction, _ in problem.getSuccessors(current_node):
                 node_stack.push(successor)
-                #print('pushing to edge_stack:', path + [direction])
+                # print('pushing to edge_stack:', path + [direction])
                 edge_stack.push(path + [direction])
         current_node = node_stack.pop()
-        #print('current node is goal:', problem.isGoalState(current_node))
+        # print('current node is goal:', problem.isGoalState(current_node))
         path = edge_stack.pop()
-        #print("current path:", path)
+        # print("current path:", path)
     print("final path:", path)
     return path
+
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
@@ -120,35 +124,40 @@ def breadthFirstSearch(problem: SearchProblem):
 
     path = []
     edge_queue = util.Queue()
-    
+
     # run the loop until the current node is the goal state
     while not problem.isGoalState(current_node):
         if current_node not in occurred:
             occurred.append(current_node)
             for successor, direction, _ in problem.getSuccessors(current_node):
                 node_queue.push(successor)
-                #print('pushing to edge_stack:', path + [direction])
+                # print('pushing to edge_stack:', path + [direction])
                 edge_queue.push(path + [direction])
         current_node = node_queue.pop()
-        #print('current node is goal:', problem.isGoalState(current_node))
-        #print('edge_queue:', edge_queue.list)
+        # print('current node is goal:', problem.isGoalState(current_node))
+        # print('edge_queue:', edge_queue.list)
         path = edge_queue.pop()
-        #print("current path:", path)
+        # print("current path:", path)
     print("final path:", path)
     return path
+
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    #UCS is similar or the same as the Lee Algortihm for pathfinding in EDA, but with weighted edges
-    #use a priority queue to get the node with the lowest cost first (same goes for the edge)
+    # UCS is similar or the same as the Lee Algortihm for pathfinding in EDA, but with weighted edges
+    # use a priority queue to get the node with the lowest cost first (same goes for the edge)
     occurred = []
-    node_queue = util.PriorityQueue()   #use a priority queue to get the node with the lowest cost
+    node_queue = (
+        util.PriorityQueue()
+    )  # use a priority queue to get the node with the lowest cost
     current_node = problem.getStartState()
 
     path = []
-    edge_queue = util.PriorityQueue()   #use a priority queue to get the edge with the lowest cost
-    
+    edge_queue = (
+        util.PriorityQueue()
+    )  # use a priority queue to get the edge with the lowest cost
+
     # run the loop until the current node is the goal state
     while not problem.isGoalState(current_node):
         if current_node not in occurred:
@@ -156,15 +165,16 @@ def uniformCostSearch(problem: SearchProblem):
             for successor, direction, edge_cost in problem.getSuccessors(current_node):
                 total_cost = problem.getCostOfActions(path) + edge_cost
                 node_queue.push(successor, total_cost)
-                #print('pushing to edge_stack:', path + [direction])
+                # print('pushing to edge_stack:', path + [direction])
                 edge_queue.push(path + [direction], total_cost)
         current_node = node_queue.pop()
-        #print('current node is goal:', problem.isGoalState(current_node))
-        #print('edge_queue:', edge_queue.list)
+        # print('current node is goal:', problem.isGoalState(current_node))
+        # print('edge_queue:', edge_queue.list)
         path = edge_queue.pop()
-        #print("current path:", path)
+        # print("current path:", path)
     print("final path:", path)
     return path
+
 
 def nullHeuristic(state, problem=None):
     """
@@ -173,31 +183,36 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    #Astar ist the same as UCS, we only add the heuristic to the total cost
+    # Astar ist the same as UCS, we only add the heuristic to the total cost
     occurred = []
     node_queue = util.PriorityQueue()
     current_node = problem.getStartState()
 
     path = []
     edge_queue = util.PriorityQueue()
-    
+
     # run the loop until the current node is the goal state
     while not problem.isGoalState(current_node):
         if current_node not in occurred:
             occurred.append(current_node)
             for successor, direction, edge_cost in problem.getSuccessors(current_node):
-                total_cost = problem.getCostOfActions(path) + edge_cost + heuristic(successor, problem)         #add the heuristic to the total cost
+                total_cost = (
+                    problem.getCostOfActions(path)
+                    + edge_cost
+                    + heuristic(successor, problem)
+                )  # add the heuristic to the total cost
                 node_queue.push(successor, total_cost)
-                #print('pushing to edge_stack:', path + [direction])
+                # print('pushing to edge_stack:', path + [direction])
                 edge_queue.push(path + [direction], total_cost)
         current_node = node_queue.pop()
-        #print('current node is goal:', problem.isGoalState(current_node))
-        #print('edge_queue:', edge_queue.list)
+        # print('current node is goal:', problem.isGoalState(current_node))
+        # print('edge_queue:', edge_queue.list)
         path = edge_queue.pop()
-        #print("current path:", path)
+        # print("current path:", path)
     print("final path:", path)
     return path
 

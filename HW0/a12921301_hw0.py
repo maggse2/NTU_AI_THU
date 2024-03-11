@@ -17,8 +17,8 @@
 # 1. A graph with no Edges
 
 
-
 import sys
+
 
 class Solution:
     def __init__(self):
@@ -34,47 +34,44 @@ class Solution:
             self.input = list(zip(self.input[::2], self.input[1::2]))
             self.input = list((int(x), int(y)) for x, y in self.input)
         except ValueError:
-            print('Input must be a list of integers')
+            print("Input must be a list of integers")
             sys.exit(1)
 
         # Read the first Tuple as the number of Nodes and Edges
-        self.numNodes = self.input[0][0] #N
-        self.numEdges = self.input[0][1] #M
+        self.numNodes = self.input[0][0]  # N
+        self.numEdges = self.input[0][1]  # M
         self.input.pop(0)
-        if self.numEdges!=len(self.input):
-            print('Number of Nodes does not match the input')
+        if self.numEdges != len(self.input):
+            print("Number of Nodes does not match the input")
             sys.exit(1)
-        #print('Number of Nodes:', self.numNodes, '\nNumber of Edges:', self.numEdges)
+        # print('Number of Nodes:', self.numNodes, '\nNumber of Edges:', self.numEdges)
         self.get_graph()
-
-
 
     # A graph is represented as a dict of sets, as inspired by https://stackoverflow.com/questions/19472530/representing-graphs-data-structure-in-python
     def get_graph(self):
         # Create a dictionary with the Nodes as keys and an empty set as the value
         self.graph = {}
-        for i in range(1, self.numNodes+1):
+        for i in range(1, self.numNodes + 1):
             self.graph[i] = set()
 
         # Add the Edges to the graph
         try:
             for edge in self.input:
                 if edge[0] == edge[1]:
-                    print('A Node cannot be connected to itself')
+                    print("A Node cannot be connected to itself")
                     sys.exit(1)
                 self.graph[edge[0]].add(edge[1])
                 self.graph[edge[1]].add(edge[0])
         except KeyError:
-            print('Edge does not exist')
+            print("Edge does not exist")
             sys.exit(1)
 
-        #print('Graph:', self.graph)
+        # print('Graph:', self.graph)
 
-        
     def solve(self):
         self.currentNode = self.STARTNODE
         self.longestPath = [self.currentNode]
-        sys.stdout.write(str(self.STARTNODE) + ' ')
+        sys.stdout.write(str(self.STARTNODE) + " ")
         # Find the longest path
         while len(self.graph[self.currentNode]):
             # Remove the current Node from the graph
@@ -85,14 +82,13 @@ class Solution:
             # Find the next Node
             self.currentNode = min(self.graph[self.currentNode])
             self.longestPath.append(self.currentNode)
-            sys.stdout.write(str(self.currentNode) + ' ')
-        
-        #print('Longest Path:', self.longestPath)
-            
+            sys.stdout.write(str(self.currentNode) + " ")
 
-    
+        # print('Longest Path:', self.longestPath)
+
     # Feel free to define your own member function
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     ans = Solution()
     ans.solve()

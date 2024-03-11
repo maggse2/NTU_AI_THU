@@ -19,6 +19,7 @@ Pacman agents (in searchAgents.py).
 
 import util
 
+
 class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
@@ -68,9 +69,11 @@ def tinyMazeSearch(problem):
     sequence of moves will be incorrect, so only use this for tinyMaze.
     """
     from game import Directions
+
     s = Directions.SOUTH
     w = Directions.WEST
-    return  [s, s, w, s, w, w, s, w]
+    return [s, s, w, s, w, w, s, w]
+
 
 def depthFirstSearch(problem: SearchProblem):
     """
@@ -87,17 +90,68 @@ def depthFirstSearch(problem: SearchProblem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # Implemented by A12921301
+    # this data structure will be changed according to the desired input/output order
+    # for DFS we use stack for LIFO
+    storage = util.Stack()
+
+    occurred = []
+    path = []
+    current_node = problem.getStartState()
+
+    while not problem.isGoalState(current_node):
+        if current_node not in occurred:
+            occurred.append(current_node)
+            for next_node, edge_nn, _ in problem.getSuccessors(current_node):
+                storage.push((next_node, path + [edge_nn]))
+        current_node, path = storage.pop()
+    return path
+
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # Implemented by A12921301
+    # for BFS we use queue for FIFO
+    storage = util.Queue()
+
+    occurred = []
+    path = []
+    current_node = problem.getStartState()
+
+    while not problem.isGoalState(current_node):
+        if current_node not in occurred:
+            occurred.append(current_node)
+            for next_node, edge_nn, _ in problem.getSuccessors(current_node):
+                storage.push((next_node, path + [edge_nn]))
+        current_node, path = storage.pop()
+    return path
+
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # Implemented by A12921301
+    # for UCS we use priority queue to get the least path cost node first
+    storage = util.PriorityQueue()
+
+    occurred = []
+    path = []
+    current_node = problem.getStartState()
+
+    while not problem.isGoalState(current_node):
+        if current_node not in occurred:
+            occurred.append(current_node)
+            # we also need to define the edge cost to the next node
+            for next_node, edge_nn, edge_nn_cost in problem.getSuccessors(current_node):
+                # and attach the total cost to the next node in storage
+                storage.push(
+                    (next_node, path + [edge_nn]),
+                    problem.getCostOfActions(path) + edge_nn_cost,
+                )
+        current_node, path = storage.pop()
+    return path
+
 
 def nullHeuristic(state, problem=None):
     """
@@ -106,10 +160,31 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # Implemented by A12921301
+    # for Astar the data structure is the same as UCS, but we need to add the heuristic to the total cost
+    storage = util.PriorityQueue()
+
+    occurred = []
+    path = []
+    current_node = problem.getStartState()
+
+    while not problem.isGoalState(current_node):
+        if current_node not in occurred:
+            occurred.append(current_node)
+            for next_node, edge_nn, edge_nn_cost in problem.getSuccessors(current_node):
+                # the heuristic is added to the total cost
+                storage.push(
+                    (next_node, path + [edge_nn]),
+                    problem.getCostOfActions(path)
+                    + edge_nn_cost
+                    + heuristic(next_node, problem),
+                )
+        current_node, path = storage.pop()
+    return path
 
 
 # Abbreviations
