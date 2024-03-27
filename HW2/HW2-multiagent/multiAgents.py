@@ -222,11 +222,6 @@ class MinimaxAgent(MultiAgentSearchAgent):
         actions = gameState.getLegalActions(0)
         return max(actions, key = lambda x: minimax(gameState.generateSuccessor(0, x), 1, 1))
 
-    # pacman gets the max value
-    #            return max(minimax(gameState.generateSuccessor(agentIndex, action), depth, agentIndex + 1) for action in gameState.getLegalActions(agentIndex))
-    #        else:
-    #            # ghosts get the min value
-    #            return min(minimax(gameState.generateSuccessor(agentIndex, action), depth, agentIndex + 1) for action in gameState.getLegalActions(agentIndex))
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
     Your minimax agent with alpha-beta pruning (question 3)
@@ -250,16 +245,16 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
             if agentIndex == 0:
                 v = [float('-inf')]
-                for a in gameState.getLegalActions(agentIndex):
-                    v = max(v, alphabeta(gameState.generateSuccessor(agentIndex, a), nextDepth, nextAgent, alpha, beta) + [a])
+                for action in gameState.getLegalActions(agentIndex):
+                    v = max(v, alphabeta(gameState.generateSuccessor(agentIndex, action), nextDepth, nextAgent, alpha, beta) + [action])
                     if v[0] > beta:
                         return v
                     alpha = max(alpha, v[0])
                 return v
             else:
                 v = [float('inf')]
-                for a in gameState.getLegalActions(agentIndex):
-                    v = min(v, alphabeta(gameState.generateSuccessor(agentIndex, a), nextDepth, nextAgent, alpha, beta) + [a])
+                for action in gameState.getLegalActions(agentIndex):
+                    v = min(v, alphabeta(gameState.generateSuccessor(agentIndex, action), nextDepth, nextAgent, alpha, beta) + [action])
                     if v[0] < alpha:
                         return v
                     beta = min(beta, v[0])
@@ -280,5 +275,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         legal moves.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        
+            
+            
 
