@@ -251,9 +251,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             if agentIndex == 0:
                 v = [float('-inf')]
                 for a in gameState.getLegalActions(agentIndex):
-                    newState = gameState.generateSuccessor(agentIndex, a)
-                    value = alphabeta(newState, nextDepth, nextAgent, alpha, beta) + [a]
-                    v = max(v, value)
+                    v = max(v, alphabeta(gameState.generateSuccessor(agentIndex, a), nextDepth, nextAgent, alpha, beta) + [a])
                     if v[0] > beta:
                         return v
                     alpha = max(alpha, v[0])
@@ -261,9 +259,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             else:
                 v = [float('inf')]
                 for a in gameState.getLegalActions(agentIndex):
-                    newState = gameState.generateSuccessor(agentIndex, a)
-                    value = alphabeta(newState, nextDepth, nextAgent, alpha, beta) + [a]
-                    v = min(v, value)
+                    v = min(v, alphabeta(gameState.generateSuccessor(agentIndex, a), nextDepth, nextAgent, alpha, beta) + [a])
                     if v[0] < alpha:
                         return v
                     beta = min(beta, v[0])
