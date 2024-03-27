@@ -94,8 +94,51 @@ class ReflexAgent(Agent):
         # Count down from 40 moves
         ghostStartPos = [ghostState.start.getPosition() for ghostState in newGhostStates]
         "*** YOUR CODE HERE ***"
-        return successorGameState.getScore()  # default scoure
+        ghostProximity = 0
+        reward = 0
+        # if there are scared ghosts within 10 steps, hunt them
+        for ghostStats in zip(ghostPositions, newScaredTimes):
+            if ghostStats[1] > 0 and manhattanDistance(ghostStats[0], newPos) <= ghostStats[1]:
+                reward += 200/manhattanDistance(ghostStats[0], newPos)
+            
+            # count proximity of ghosts to know whether to consider capsules
+            else:
+                # basic survival instinct
+                if manhattanDistance(ghostStats[0], newPos) <= 2:
+                    reward -= 999999
+
+
+        
+        # otherwise find closest POI
+        
+        # convert grid of boolean to list of tuples
+        foodList = newFood.asList()
+        reward -= 11 * len(foodList)
+        if foodList != []:
+            for food in foodList:
+                reward += 10/(manhattanDistance(newPos, food)**2)
+
+        
+        reward -= 201 * len(newGhostStates)
+        if newCapsule != []:
+            for capsule in newCapsule:
+                reward += 200/(manhattanDistance(newPos, capsule)+min([manhattanDistance(ghost, capsule) for ghost in ghostPositions]))
+       
+        
+
+        
+
+        return successorGameState.getScore() + reward # - len(foodList) * 10  - 200 * len(newGhostStates)
+    
+    
+
+            
+        
+        #return successorGameState.getScore()  # default scoure
         # please change the return score as the score you want
+
+        
+                
 
 def scoreEvaluationFunction(currentGameState: GameState):
     """
@@ -156,8 +199,34 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
 
+        def minimax(gameState, depth, agentIndex):
+            if gameState.isWin() or gameState.isLose() or (depth == self.depth and agentIndex == gameState.getNumAgents()):
+                print("depth", depth)
+                print("self.depth", self.depth)
+                print("agentIndex", agentIndex)
+                print("self.getNumAgents", gameState.getNumAgents())
+                return self.evaluationFunction(gameState)
+            
+            if agentIndex == gameState.getNumAgents():
+                print("depth", depth)
+                return minimax(gameState, depth + 1, 0)
+            
+            if agentIndex == 0:
+                # pacman gets the max value
+                return max(minimax(gameState.generateSuccessor(agentIndex, action), depth, agentIndex + 1) for action in gameState.getLegalActions(agentIndex))
+            else:
+                # ghosts get the min value
+                return min(minimax(gameState.generateSuccessor(agentIndex, action), depth, agentIndex + 1) for action in gameState.getLegalActions(agentIndex))
+                
+        actions = gameState.getLegalActions(0)
+        return max(actions, key = lambda x: minimax(gameState.generateSuccessor(0, x), 1, 1))
+
+    # pacman gets the max value
+    #            return max(minimax(gameState.generateSuccessor(agentIndex, action), depth, agentIndex + 1) for action in gameState.getLegalActions(agentIndex))
+    #        else:
+    #            # ghosts get the min value
+    #            return min(minimax(gameState.generateSuccessor(agentIndex, action), depth, agentIndex + 1) for action in gameState.getLegalActions(agentIndex))
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
     Your minimax agent with alpha-beta pruning (question 3)
@@ -168,8 +237,40 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        def alphabeta(gameState, depth, agentIndex, alpha, beta):
+            if gameState.isWin() or gameState.isLose() or depth >= self.depth:
+                return [self.evaluationFunction(gameState)]
+            
+            if agentIndex == gameState.getNumAgents()-1:
+                nextAgent = 0
+                nextDepth = depth + 1
+            else:
+                nextAgent = agentIndex + 1
+                nextDepth = depth
 
+            if agentIndex == 0:
+                v = [float('-inf')]
+                for a in gameState.getLegalActions(agentIndex):
+                    newState = gameState.generateSuccessor(agentIndex, a)
+                    value = alphabeta(newState, nextDepth, nextAgent, alpha, beta) + [a]
+                    v = max(v, value)
+                    if v[0] > beta:
+                        return v
+                    alpha = max(alpha, v[0])
+                return v
+            else:
+                v = [float('inf')]
+                for a in gameState.getLegalActions(agentIndex):
+                    newState = gameState.generateSuccessor(agentIndex, a)
+                    value = alphabeta(newState, nextDepth, nextAgent, alpha, beta) + [a]
+                    v = min(v, value)
+                    if v[0] < alpha:
+                        return v
+                    beta = min(beta, v[0])
+                return v
+            
+        return alphabeta(gameState, 0, 0, float('-inf'), float('inf'))[-1]
+    
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
       Your expectimax agent (question 4)
