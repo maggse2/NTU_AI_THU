@@ -202,14 +202,14 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
         def minimax(gameState, depth, agentIndex):
             if gameState.isWin() or gameState.isLose() or (depth == self.depth and agentIndex == gameState.getNumAgents()):
-                print("depth", depth)
-                print("self.depth", self.depth)
-                print("agentIndex", agentIndex)
-                print("self.getNumAgents", gameState.getNumAgents())
+                #print("depth", depth)
+                #print("self.depth", self.depth)
+                #print("agentIndex", agentIndex)
+                #print("self.getNumAgents", gameState.getNumAgents())
                 return self.evaluationFunction(gameState)
             
             if agentIndex == gameState.getNumAgents():
-                print("depth", depth)
+                #print("depth", depth)
                 return minimax(gameState, depth + 1, 0)
             
             if agentIndex == 0:
@@ -275,6 +275,27 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         legal moves.
         """
         "*** YOUR CODE HERE ***"
+        def expectimax(gameState, depth, agentIndex):
+            if gameState.isWin() or gameState.isLose() or (depth == self.depth and agentIndex == gameState.getNumAgents()):
+                #print("depth", depth)
+                #print("self.depth", self.depth)
+                #print("agentIndex", agentIndex)
+                #print("self.getNumAgents", gameState.getNumAgents())
+                return self.evaluationFunction(gameState)
+            
+            if agentIndex == gameState.getNumAgents():
+                #print("depth", depth)
+                return expectimax(gameState, depth + 1, 0)
+            
+            if agentIndex == 0:
+                # pacman gets the max value
+                return max(expectimax(gameState.generateSuccessor(agentIndex, action), depth, agentIndex + 1) for action in gameState.getLegalActions(agentIndex))
+            else:
+                # ghosts get the min value
+                return sum(expectimax(gameState.generateSuccessor(agentIndex, action), depth, agentIndex + 1) for action in gameState.getLegalActions(agentIndex))/len(gameState.getLegalActions(agentIndex))
+                
+        actions = gameState.getLegalActions(0)
+        return max(actions, key = lambda x: expectimax(gameState.generateSuccessor(0, x), 1, 1))
         
             
             
